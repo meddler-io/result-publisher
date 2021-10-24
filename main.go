@@ -2,29 +2,24 @@ package main
 
 import (
 	"encoding/json"
-	"os"
+	"log"
 
 	"github.com/meddler-io/watchdog/bootstrap"
 	"github.com/meddler-io/watchdog/consumer"
 	"github.com/meddler-io/watchdog/logger"
 	"meddler.io/result-publisher/db"
-)
+	"meddler.io/result-publisher/helper"
 
-func getenvStr(key string, defaultValue string) string {
-	v := os.Getenv(key)
-	if v == "" {
-		return defaultValue
-	}
-	return v
-}
+	"meddler.io/result-publisher/structs"
+)
 
 func main() {
 
 	forever := make(chan bool)
 
-	username := getenvStr("RMQ_USERNAME", "user")
-	password := getenvStr("RMQ_PASSWORD", "bitnami")
-	host := getenvStr("RMQ_HOST", "192.168.29.9")
+	username := helper.GetenvStr("RMQ_USERNAME", "user")
+	password := helper.GetenvStr("RMQ_PASSWORD", "bitnami")
+	host := helper.GetenvStr("RMQ_HOST", "192.168.29.9")
 	logger.Println("username", username)
 	logger.Println("password", password)
 	logger.Println("host", host)
@@ -36,15 +31,15 @@ func main() {
 	// db.Test()
 
 	queue.Consume(func(i string) {
-		logger.Println("Received message with first consumer: %s", i)
 
-		taskResult := bootstrap.TaskResult{}
+		taskResult := structs.TaskResult{}
 		err := json.Unmarshal([]byte(i), &taskResult)
-		logger.Println(i)
-		logger.Println(taskResult)
-		logger.Println(err)
-
-		db.Test(taskResult)
+		if err != nil {
+			log.Println("Invalid Message", i)
+			return
+		}
+		logger.Println("Task:", taskResult.Identifier, taskResult.Status, taskResult.Message)
+		db.UpdateTaslResult(taskResult)
 	})
 
 	<-forever

@@ -36,7 +36,7 @@ func UpdateTaslResult(taskResult structs.TaskResult) {
 	MONGO_PORT := helper.GetenvStr("MONGO_PORT", "27017")
 	MONGO_DB := helper.GetenvStr("MONGO_DB", "fastapi")
 
-	MONGO_COLLECTION := "builds_executor"
+	MONGO_COLL := helper.GetenvStr("MONGO_COLL", "builds_executor")
 
 	MONGO_URL := fmt.Sprintf("mongodb://%s:%s/%s", MONGO_HOST, MONGO_PORT, MONGO_DB)
 
@@ -59,7 +59,7 @@ func UpdateTaslResult(taskResult structs.TaskResult) {
 	// bootstrap.CONSTANTS.System.INPUTDIR
 
 	log.Println(_id, err)
-	collection := client.Database(MONGO_DB).Collection(MONGO_COLLECTION)
+	collection := client.Database(MONGO_DB).Collection(MONGO_COLL)
 
 	responseStruct := bson.M{
 
@@ -83,5 +83,7 @@ func UpdateTaslResult(taskResult structs.TaskResult) {
 	)
 
 	logger.Println("Task:", "Updated Results", taskResult.Identifier, result, err)
+	logger.Println("MONGO_COLL")
+	logger.Println(MONGO_COLL, result.MatchedCount, result.ModifiedCount)
 
 }

@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -32,13 +31,14 @@ func UpdateTaslResult(taskResult structs.TaskResult) {
 	   Connect to my cluster
 	*/
 
-	MONGO_HOST := helper.GetenvStr("MONGO_HOST", "localhost")
-	MONGO_PORT := helper.GetenvStr("MONGO_PORT", "27017")
+	// MONGO_HOST := helper.GetenvStr("MONGO_HOST", "localhost")
+	// MONGO_PORT := helper.GetenvStr("MONGO_PORT", "27017")
 	MONGO_DB := helper.GetenvStr("MONGO_DB", "fastapi")
+	MONGO_URL := helper.GetenvStr("MONGO_URL", "fastapi")
 
 	MONGO_COLL := helper.GetenvStr("MONGO_COLL", "builds_executor")
 
-	MONGO_URL := fmt.Sprintf("mongodb://%s:%s/%s", MONGO_HOST, MONGO_PORT, MONGO_DB)
+	// MONGO_URL := fmt.Sprintf("mongodb://%s:%s/%s", MONGO_HOST, MONGO_PORT, MONGO_DB)
 
 	log.Println("MONGO_URL", MONGO_URL)
 
